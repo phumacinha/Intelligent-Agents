@@ -1,6 +1,6 @@
 /* The general structure is to put the AI code in xyz.js and the visualization
    code in c_xyz.js. Create a diagram object that contains all the information
-   needed to draw the diagram, including references to the environment&agents.
+   needed to draw the diagram, including references to the environment & agents.
    Then use a draw function to update the visualization to match the data in
    the environment & agent objects. Use a separate function if possible for 
    controlling the visualization (whether through interaction or animation). 
@@ -49,7 +49,7 @@ function makeDiagram(selector, numFloors, numRooms) {
 
     diagram.carpets = [];
     for (let floorNumber = 0; floorNumber < world.numFloors; floorNumber++) {
-        let floor = [];
+        diagram.carpets.push([]);
         for (let roomNumber = 0; roomNumber < world.numRooms; roomNumber++) {
             let room =
                 diagram.root.append('rect')
@@ -63,9 +63,8 @@ function makeDiagram(selector, numFloors, numRooms) {
                     world.markCarpetDirty(floorNumber, roomNumber);
                     diagram.carpets[floorNumber][roomNumber].attr('class', 'dirty floor');
                 });
-            floor.push(room);
+                diagram.carpets[floorNumber].push(room);
         }
-        diagram.carpets.push(floor);
     }
     return diagram;
 }
@@ -126,8 +125,22 @@ function makeAgentControlledDiagram(numFloors, numRooms) {
     }
     update();
     setInterval(update, STEP_TIME_MS);
+    setInterval(() => makeDirty(diagram), getRandomInt(STEP_TIME_MS, 4 * STEP_TIME_MS));
 }
 
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function makeDirty(diagram) {
+    const lastFloor = diagram.world.numFloors;
+    const lastRoom = diagram.world.numRooms;
+    const floorNumber = getRandomInt(0, lastFloor);
+    const roomNumber = getRandomInt(0, lastRoom);
+    diagram.carpets[floorNumber][roomNumber].dispatch("click");
+}
 
 /* Control the diagram by letting the reader choose the action. This
    diagram is tricky.
@@ -143,7 +156,7 @@ function makeAgentControlledDiagram(numFloors, numRooms) {
       by highlighting the percepts in the accompanying table, pausing,
       and then highlighting the action.
 */
-function makeReaderControlledDiagram(numFloors, numRooms) {
+function makeUserControlledDiagram(numFloors, numRooms) {
     let diagram = makeDiagram('#reader-controlled-diagram svg', numFloors, numRooms);
     let nextAction = null;
     let animating = false; // either false or a setTimeout intervalID
@@ -212,7 +225,7 @@ function updateDiagram() {
     const numFloors = parseInt(d3.select("#numFloors").node().value);
     const numRooms = parseInt(d3.select("#numRooms").node().value);
     makeAgentControlledDiagram(numFloors, numRooms);
-    makeReaderControlledDiagram(numFloors, numRooms);
+    makeUserControlledDiagram(numFloors, numRooms);
 }
 
 updateDiagram();
