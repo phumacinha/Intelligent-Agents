@@ -4,17 +4,16 @@ class World {
     constructor(numFloors, numRooms) {
         this.numFloors = numFloors;
         this.numRooms = numRooms;
-        this.location = {floor: 0, room: 0};
-        this.lastDirection = {vertical: 'LEFT', horizontal: 'TOP'};
-        this.lastMove = 'TOP';
+        this.location = Object.seal({floor: 0, room: 0});
+        this.lastDirection = Object.seal({vertical: 'LEFT', horizontal: 'UP'});
+        this.lastMove = 'UP';
 
         this.carpets = [];
         for (let i = 0; i < numFloors; i++) {
-            let floor = [];
+            this.carpets.push([]);
             for (let j = 0; j < numRooms; j++) {
-                floor.push({dirty: false});
+                this.carpets[i].push({dirty: false});
             }
-            this.carpets.push(floor);
         }
     }
     
@@ -27,7 +26,7 @@ class World {
     }
 
     goForward(position, maxPosition) {
-        return position === maxPosition-1 ? position : ++position;
+        return position === maxPosition ? position : ++position;
     }
 
     goBackward(position) {
@@ -47,15 +46,15 @@ class World {
                 break;
             case 'RIGHT':
                 this.lastDirection.horizontal = action;
-                this.location.room = this.goForward(this.location.room, this.numRooms);
+                this.location.room = this.goForward(this.location.room, this.numRooms - 1);
                 break;
-            case 'TOP':
+            case 'UP':
                 this.lastDirection.vertical = action;
                 this.location.floor = this.goBackward(this.location.floor);
                 break;
-            case 'BOTTOM':
+            case 'DOWN':
                 this.lastDirection.vertical = action;
-                this.location.floor = this.goForward(this.location.floor, this.numFloors);
+                this.location.floor = this.goForward(this.location.floor, this.numFloors - 1);
                 break;
         }
 
@@ -69,29 +68,22 @@ function reflexVacuumAgent(world) {
     const {numFloors, numRooms, lastDirection, lastMove} = world;
     const {floor, room} = world.location;
     
-    const itsMostRight = room === numRooms - 1;
-    const itsMostLeft = room === 0;
-    const itsOnEdge = itsMostLeft || itsMostRight;
-    const itsInMiddleRooms = !itsOnEdge;
+    const itsMostRight      = room === numRooms - 1;
+    const itsMostLeft       = room === 0;
+    const itsOnEdge         = itsMostLeft || itsMostRight;
+    const itsInMiddleRooms  = !itsOnEdge;
 
-    const itsAtBottom = floor === numFloors - 1;
-    const itsAtTop = floor === 0;
+    const itsAtBottom       = floor === numFloors - 1;
+    const itsAtTop          = floor === 0;
     const itsInMiddleFloors = !itsAtTop && !itsAtBottom;
 
     const lastMoveWasHorizontal = lastMove === 'LEFT' || lastMove === 'RIGHT';
 
     if (world.carpets[floor][room].dirty)                                              { return 'SUCK'; }
-    else if (numFloors > 1 && itsOnEdge && itsAtTop && lastMove !== 'TOP')             { return 'BOTTOM'; }
-    else if (numFloors > 1 && itsOnEdge && itsAtBottom && lastMove !== 'BOTTOM')       { return 'TOP'; }
+    else if (numFloors > 1 && itsOnEdge && itsAtTop && lastMove !== 'UP')              { return 'DOWN'; }
+    else if (numFloors > 1 && itsOnEdge && itsAtBottom && lastMove !== 'DOWN')         { return 'UP'; }
     else if (numFloors > 1 && itsOnEdge && itsInMiddleFloors && lastMoveWasHorizontal) { return lastDirection.vertical; }
     else if (numRooms > 1 && itsMostRight)                                             { return 'LEFT'; }
     else if (numRooms > 1 && itsMostLeft)                                              { return 'RIGHT'; }
     else if (numRooms > 1 && itsInMiddleRooms)                                         { return lastDirection.horizontal; }
-}
-
-// Rules are defined in data, in a table indexed by [location][dirty]
-function tableVacuumAgent(world, table) {
-    const { floor, room } = world.location;
-    let dirty = world.carpets[floor][room].dirty ? 1 : 0;
-    return table[floor][room][dirty];
 }

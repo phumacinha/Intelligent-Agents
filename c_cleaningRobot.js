@@ -99,8 +99,8 @@ function renderAgentAction(diagram, action) {
         'SUCK': 'Vacuuming',
         'LEFT': 'Going left',
         'RIGHT': 'Going right',
-        'TOP': 'Going top',
-        'BOTTOM': 'Going bottom'
+        'UP': 'Going up',
+        'DOWN': 'Going down'
     };
     diagram.actionText.text(actionLabel[action]);
 }
@@ -173,8 +173,8 @@ function makeReaderControlledDiagram(numFloors, numRooms) {
         makeButton({action: 'SUCK', label:'Vacuum', left: 50, height: 48, className: 'btn-primary'}),
         makeButton({action: 'LEFT', label:'Move left', left: 200, top: 12}),
         makeButton({action: 'RIGHT', label:'Move right', left: 400, top: 12}),
-        makeButton({action: 'TOP', label:'Move top', left: 300}),
-        makeButton({action: 'BOTTOM', label:'Move bottom', left: 300, top: 24})
+        makeButton({action: 'UP', label:'Move up', left: 300}),
+        makeButton({action: 'DOWN', label:'Move down', left: 300, top: 24})
     ];
 
     function updateButtons() {
