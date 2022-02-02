@@ -208,72 +208,11 @@ function makeReaderControlledDiagram(numFloors, numRooms) {
     }
 }
 
-
-/* Control the diagram by letting the reader choose the rules that
-   the AI agent should follow. The animation flow is similar to the
-   first agent controlled diagram but there is an additional table
-   UI that lets the reader view the percepts and actions being followed
-   as well as change the rules followed by the agent. */
-// function makeTableControlledDiagram() {
-//     let diagram = makeDiagram('#table-controlled-diagram svg');
-
-//     function update() {
-//         let table = getRulesFromPage();
-//         let location = diagram.world.location;
-//         let percept = diagram.world.carpets[location.floor][location.room].dirty;
-//         let action = tableVacuumAgent(diagram.world, table);
-//         diagram.world.simulate(action);
-//         renderWorld(diagram);
-//         renderAgentPercept(diagram, percept);
-//         renderAgentAction(diagram, action);
-//         showPerceptAndAction(location, percept, action);
-//     }
-//     update();
-//     setInterval(update, STEP_TIME_MS);
-    
-//     function getRulesFromPage() {
-//         let table = d3.select("#table-controlled-diagram table");
-//         let left_clean = table.select("[data-action=left-clean] select").node().value;
-//         let left_dirty = table.select("[data-action=left-dirty] select").node().value;
-//         let right_clean = table.select("[data-action=right-clean] select").node().value;
-//         let right_dirty = table.select("[data-action=right-dirty] select").node().value;
-//         let top_clean = table.select("[data-action=top-clean] select").node().value;
-//         let top_dirty = table.select("[data-action=top-dirty] select").node().value;
-//         let bottom_clean = table.select("[data-action=bottom-clean] select").node().value;
-//         let bottom_dirty = table.select("[data-action=bottom-dirty] select").node().value;
-//         return [[left_clean, left_dirty], [right_clean, right_dirty]];
-//     }
-
-//     function showPerceptAndAction(location, percept, action) {
-//         let locationMarker = location? 'right' : 'left';
-//         let perceptMarker = percept? 'dirty' : 'clean';
-        
-//         d3.selectAll('#table-controlled-diagram th')
-//             .filter(function() {
-//                 let marker = d3.select(this).attr('data-input');
-//                 return marker == perceptMarker || marker == locationMarker;
-//             })
-//             .style('background-color', (d) => colors.perceptHighlight);
-        
-//         d3.selectAll('#table-controlled-diagram td')
-//             .style('padding', '5px')
-//             .filter(function() {
-//                 let marker = d3.select(this).attr('data-action');
-//                 return marker == locationMarker + '-' + perceptMarker;
-//             })
-//             .transition().duration(0.05 * STEP_TIME_MS)
-//             .style('background-color', colors.actionHighlight)
-//             .transition().duration(0.9 * STEP_TIME_MS)
-//             .style('background-color', colors.actionBackground);
-//     }
-// }
-
 function updateDiagram() {
     const numFloors = parseInt(d3.select("#numFloors").node().value);
     const numRooms = parseInt(d3.select("#numRooms").node().value);
     makeAgentControlledDiagram(numFloors, numRooms);
     makeReaderControlledDiagram(numFloors, numRooms);
-    // makeTableControlledDiagram(numFloors, numRooms);
 }
 
 updateDiagram();
