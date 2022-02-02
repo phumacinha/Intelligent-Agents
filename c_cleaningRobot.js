@@ -135,10 +135,8 @@ function getRandomInt(min, max) {
 }
 
 function makeDirty(diagram) {
-    const lastFloor = diagram.world.numFloors;
-    const lastRoom = diagram.world.numRooms;
-    const floorNumber = getRandomInt(0, lastFloor);
-    const roomNumber = getRandomInt(0, lastRoom);
+    const floorNumber = getRandomInt(0, diagram.world.numFloors);
+    const roomNumber = getRandomInt(0, diagram.world.numRooms);
     diagram.carpets[floorNumber][roomNumber].dispatch("click");
 }
 
